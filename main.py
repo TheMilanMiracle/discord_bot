@@ -1,8 +1,9 @@
 import dotenv as env
 import os
-from libs import client as bc
-from libs import events
+from libs.client import *
+from libs.events import *
+from libs.commands import *
 
 env.load_dotenv()
 
-bc.botClient.run(os.environ["TOKEN"])
+botClient.run(os.environ["TOKEN"])
