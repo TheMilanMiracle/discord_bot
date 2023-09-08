@@ -14,7 +14,9 @@ async def operate_command(interaction:discord.Interaction):
     
 
 @botClient.tree.command(name="avatar", description="can show a bigger version of the avatar of a member")
-async def operate_command(interaction:discord.Interaction, member:discord.Member):
-    await interaction.response.send_message(member.display_name)
-    await interaction.response.send_message(member.display_icon)
+async def avatar_command(interaction:discord.Interaction, member:discord.Member):
     await interaction.response.send_message(member.display_avatar)
+    
+@botClient.tree.command(name="icon", description="show the icon of the sender of the command")
+async def icon_command(interaction:discord.Interaction, member:discord.Member):
+    await interaction.response.send_message(member.display_icon)
