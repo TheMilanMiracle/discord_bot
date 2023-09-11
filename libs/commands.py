@@ -21,7 +21,9 @@ async def avatar_command(interaction:discord.Interaction, member:discord.Member)
     
 
 @botClient.tree.command(name="casino", description="actions: [register/balance]", guilds = GUILDS_LIST)
-async def casino_command(interaction: discord.Interaction, action: str, member: discord.Member):
+async def casino_command(interaction: discord.Interaction, action: str):
+    member = interaction.user
+    
     print(f"casino '{action} {member.name}' called")
     
     if action == "register":
