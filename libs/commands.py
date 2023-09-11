@@ -2,6 +2,7 @@ from libs.client import *
 from libs.guilds_and_channels import *
 from media.files import *
 import discord
+import typing as t
 import random as r
 
 @botClient.tree.command(name="hello", description="salute the comrade bot!", guilds = GUILDS_LIST)
@@ -20,7 +21,7 @@ async def avatar_command(interaction:discord.Interaction, member:discord.Member)
     await interaction.response.send_message(member.display_avatar)
     
 
-@botClient.tree.command(name="casino", description="actions: [register/balance]", guilds = GUILDS_LIST)
+@botClient.tree.command(name="casino", description="come and fullfil yout gambling addiction", guilds = GUILDS_LIST)
 async def casino_command(interaction: discord.Interaction, action: str):
     member = interaction.user
     
@@ -67,3 +68,13 @@ async def casino_command(interaction: discord.Interaction, action: str):
             
         else:
             await interaction.response.send_message(content=f"The user {member.name} is not registered",silent=True)
+            
+@casino_command.autocomplete("action")
+async def casino_autocomplete(interaction: discord.Interaction, current: str) -> t.List[app_commands.Choice[str]]:
+    data = []
+    for action in ["register", "balance"]:
+        if current in action:
+            data.append(app_commands.Choice(name=action, value=action))
+    return data
+
+
