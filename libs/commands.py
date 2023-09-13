@@ -79,13 +79,13 @@ async def casino_autocomplete(interaction: discord.Interaction, current: str) ->
     return data
 
 
-@botClient.tree.command(name="roulette", guilds=GUILDS_LIST)
+@botClient.tree.command(name="roulette",description="try you luck in the roulette", guilds=GUILDS_LIST)
 @app_commands.describe(action="[chart]: to see prizes table, [bet]: to make a bet")
 @app_commands.describe(bet="add your bet only if you are making one")
-@app_commands.describe(number="the number you want to bet on")
 @app_commands.describe(tokens="the amount of tokens you want to bet")
-async def roullete_command(interaction: discord.Interaction, action: str, bet: str = "", number: int = 0, tokens: int = 0):
+async def roullete_command(interaction: discord.Interaction, action: str, bet: str = "", tokens: int = 0):
     member = interaction.user
+    bet = bet.strip(" ")
     
     print(f"roulette '{action} ({bet},{tokens})' called by {member.name}")
     
@@ -108,7 +108,18 @@ async def roullete_command(interaction: discord.Interaction, action: str, bet: s
         await interaction.response.send_message(content=f"{chart}", silent=True)
     
     elif action == "bet":
+    
+        if bet == "":
+            await interaction.response.send_message(content=f"You didnt specify a bet", silent=True)
         
+        if tokens == 0:    
+    
+            await interaction.response.send_message(content=f"You didnt specify the tokens to bet", silent=True)
+    
+    
+    
+    
+    
         dataR = open("libs/data/CasinoBags_Data.txt","r")
         
         hasEnough = True
@@ -124,36 +135,62 @@ async def roullete_command(interaction: discord.Interaction, action: str, bet: s
         
         if hasEnough:
             
-            await interaction.response.send_message(content=f"Watch Out!{member.name} is betting {tokens} tokens!", silent=True, file=rouletteGif)
+            await interaction.response.send_message(content=f"Watch Out! {member.name} is betting {tokens} tokens on '{bet}'!", silent=True, file=rouletteGif)
             
             options = [i for i in range(0,37)]
             
             black = [2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35]
             
             result = random.choice(options)
-            
-            
+
             time.sleep(8)
             
             won = False
-            if bet == "singular" and result == number:
+            if str(result) == bet:
                 won = True
                 multiplier = 36
-            elif (bet == "first12" and (result <= 12)) or (bet == "second12" and (result >= 13 and result <= 24)) or (bet == "third12" and (result >= 25)):
+            elif (bet == "first12" and (int(result) <= 12)) or (bet == "second12" and (int(result) >= 13 and int(result) <= 24)) or (bet == "third12" and (int(result) >= 25)):
                 won = True
                 multiplier = 12
-            elif (bet == "black" and result in black) or (bet == "red" and result not in black and result != 0):
+            elif (bet == "black" and int(result) in black) or (bet == "red" and int(result) not in black and int(result) != 0):
                 won = True
                 multiplier = 2
-            elif (bet == "even" and result%2 == 2) or (bet == "odd" and result%2 != 2):
+            elif (bet == "even" and int(result)%2 == 2) or (bet == "odd" and int(result)%2 != 2):
                 won = True
                 multiplier = 2
             
             if won:
+                delta_balance = tokens * multiplier
                 await interaction.edit_original_response(content=f"The result was... {result}! you won {tokens * multiplier} tokens!")
             
             else:
+                delta_balance = - tokens
                 await interaction.edit_original_response(content=f"The result was... {result}! Sorry, you lost")
+                
+            dataR = open("libs/data/CasinoBags_Data.txt","r")
+            lines = dataR.readlines()
+            
+            newLines = []
+            for line in lines:
+                info = line.strip("\n").split("|")
+                
+                if info[0] != "[id]" and int(info[0]) == member.id:
+                    line = line.replace("|"+info[1], "|"+str(int(info[1]) + delta_balance))
+                    newLines.append(line)
+                    break
+            
+                newLines.append(line)
+            
+
+            
+            dataW = open("libs/data/CasinoBags_Data.txt", "w")
+            
+               
+            for line in newLines:   
+                dataW.write(line)
+                
+            dataR.close()
+            dataW.close()
             
         else:
             
