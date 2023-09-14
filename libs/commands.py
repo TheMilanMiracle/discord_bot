@@ -47,7 +47,7 @@ async def casino_command(interaction: discord.Interaction, action: str):
             
         else:
             dataA = open("libs/data/CasinoBags_data.txt", "a")
-            dataA.write(f"\n{member.id}|{0}")
+            dataA.write(f"\n{member.id}|{100}")
             
             await interaction.response.send_message(content=f"Welcome {member.name} to the casino!", silent=True)
             
@@ -111,10 +111,20 @@ async def roullete_command(interaction: discord.Interaction, action: str, bet: s
     
         if bet == "":
             await interaction.response.send_message(content=f"You didnt specify a bet", silent=True)
+            return
         
         if tokens == 0:    
     
             await interaction.response.send_message(content=f"You didnt specify the tokens to bet", silent=True)
+            return
+            
+        options = [str(i) for i in range(37)]
+        options.extend(["first12","second12","third12","black","red","even","odd"])  
+        
+        if bet not in options:
+            
+            await interaction.response.send_message(content=f'Your bet is not correct. Try with a number, "first12", "second12", "third12", "red", "black", "odd" or "even".')
+            return
     
     
     
@@ -204,3 +214,18 @@ async def roullete_command(interaction: discord.Interaction, action: str, bet: s
         
         await interaction.response.send_message(content=f"Unknown action. Try again!", silent=True)
         
+@roullete_command.autocomplete("action")
+async def roullete_action_autocomplete(interaction: discord.Interaction, current: str) -> typing.List[app_commands.Choice[str]]:
+    data = []
+    for action in ["chart", "bet"]:
+        if current in action:
+            data.append(app_commands.Choice(name=action, value=action))
+    return data
+
+@roullete_command.autocomplete("bet")
+async def roullete_bet_autocomplete(interaction: discord.Interaction, current: str) -> typing.List[app_commands.Choice[str]]:
+    data = []
+    for bet in ["first12","second12","third12","black","red","even","odd"]:
+        if current in bet:
+            data.append(app_commands.Choice(name=bet, value=bet))
+    return data

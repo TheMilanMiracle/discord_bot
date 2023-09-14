@@ -35,7 +35,6 @@ async def on_message(message):
   if message.author == botClient.user:
     return
   
-
   
   else:
     if message.author.nick == "tester":
@@ -45,5 +44,5 @@ async def on_message(message):
         
       if message.content.startswith("\\sync"):
         print("sync...")
-        await botClient.tree.sync()
+        await botClient.tree.sync(guild=botClient.get_guild(os.environ["TEST_GUILD_ID"]))
 
