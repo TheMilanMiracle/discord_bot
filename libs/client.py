@@ -12,4 +12,4 @@ class BotClass(discord.Client):
 intents = discord.Intents.default()
 intents.message_content = True
 botClient = BotClass(intents=intents)
-s
+botClient.activity = discord.Activity(name="still testing...",type=0)

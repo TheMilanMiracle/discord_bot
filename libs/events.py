@@ -13,9 +13,10 @@ env.load_dotenv()
 
 @botClient.event
 async def on_ready():
-  print("------------------------ Boot Up info ---------------------------------")
+  print("============================== Boot up info ===============================")
   print(f"| The bot is booted up, as {botClient.user}, with id {botClient.user.id}|")
-  print("-----------------------------------------------------------------------")
+  print(f"| Using the status: '{botClient.status}' and activity '{botClient.activity}'|                    |")
+  print("===========================================================================")
   
   GUILDS_LIST.append(botClient.get_guild(os.environ["TEST_GUILD_ID"]))
   
